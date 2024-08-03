@@ -107,6 +107,9 @@ function App() {
     setCorrectList([]);
     setWrongList([]);
     setData([...data]);
+    if (containerRef.current) {
+      containerRef.current.style.transform = `translateY(0px)`;
+    }
   };
   useEffect(() => {
     if (isStart) {
