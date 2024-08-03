@@ -15,6 +15,7 @@ function App() {
   const [correctList, setCorrectList] = useState<number[]>([]);
   const [wrongList, setWrongList] = useState<number[]>([]);
   const [isStart, setIsStart] = useState(false);
+  const [isShowEndGame, setIsShowEndGame] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const timeString = useMemo(() => {
@@ -97,6 +98,16 @@ function App() {
     const randomList = getRandomList(data);
     return randomList.filter((item) => item.trim() !== "");
   }, [data]);
+  const handleShowEndGame = () => {
+    setIsShowEndGame(true);
+  };
+  const handleEndGame = () => {
+    setIsStart(false);
+    setIndexInput(0);
+    setCorrectList([]);
+    setWrongList([]);
+    setData([...data]);
+  };
   useEffect(() => {
     if (isStart) {
       const interval = setInterval(() => {
@@ -108,10 +119,35 @@ function App() {
       setIndexInput(0);
     }
   }, [isStart]);
-
+  useEffect(() => {
+    if (timeCountDown <= 0 || indexInput === randomedData.length) {
+      handleShowEndGame();
+    }
+  }, [timeCountDown, indexInput]);
   return (
     <>
-      <div className="flex justify-center items-center flex-col h-screen bg-[#bddefe]">
+      <div className="flex justify-center items-center flex-col h-screen bg-[#bddefe] relative">
+        {isShowEndGame && (
+          <div className="fixed h-full w-full bg-gray-400 z-40 flex justify-center items-center bg-opacity-50">
+            <div className="bg-white p-4 rounded-md w-[400px] h-[200px] flex justify-center items-center flex-col">
+              <h1 className="text-3xl font-semibold">Kết thúc</h1>
+              <div className="mt-2">
+                <p>Chính xác: {correctList.length}</p>
+                <p>Sai: {wrongList.length}</p>
+              </div>
+              <button
+                className="px-3 bg-[#3c4d5c] rounded-md text-white font-semibold text-[18px] mt-2"
+                onClick={() => {
+                  setIsShowEndGame(false);
+                  handleEndGame();
+                }}
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        )}
+        <h1 className="text-3xl font-semibold mb-2">Speed Typing</h1>
         <div className="container max-w-[1000px]">
           <div className="w-full h-[110px] bg-white rounded-md break-before-all whitespace-break-spaces p-1 overflow-hidden">
             <div className={`relative `} ref={containerRef}>
