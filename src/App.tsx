@@ -17,6 +17,7 @@ function App() {
   const [isStart, setIsStart] = useState(false);
   const [isShowEndGame, setIsShowEndGame] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const timeString = useMemo(() => {
     return dayjs(timeCountDown, "ss").format("mm:ss");
@@ -100,6 +101,9 @@ function App() {
   }, [data]);
   const handleShowEndGame = () => {
     setIsShowEndGame(true);
+    if (inputRef.current) {
+      inputRef.current?.blur();
+    }
   };
   const handleEndGame = () => {
     setIsStart(false);
@@ -107,6 +111,8 @@ function App() {
     setCorrectList([]);
     setWrongList([]);
     setData([...data]);
+    setInputValue("");
+
     if (containerRef.current) {
       containerRef.current.style.transform = `translateY(0px)`;
     }
@@ -129,7 +135,7 @@ function App() {
   }, [timeCountDown, indexInput]);
   return (
     <>
-      <div className="flex justify-center items-center flex-col h-screen bg-[#bddefe] relative">
+      <div className="flex justify-center items-center flex-col h-screen bg-[#bddefe] relative px-2 lg:px-0">
         {isShowEndGame && (
           <div className="fixed h-full w-full bg-gray-400 z-40 flex justify-center items-center bg-opacity-50">
             <div className="bg-white p-4 rounded-md w-[400px] h-[200px] flex justify-center items-center flex-col">
@@ -171,6 +177,7 @@ function App() {
             <input
               type="text"
               value={inputValue}
+              ref={inputRef}
               className="h-[46px] w-[460px] rounded-md shadow-md p-2"
               onChange={(e) => {
                 if (!isStart) {
@@ -204,7 +211,7 @@ function App() {
             <div>
               <textarea
                 value={data.join(",")}
-                className="w-full h-[400px] rounded-md mt-2 p-2"
+                className="w-full h-[100px] md:h-[400px] rounded-md mt-2 p-2"
                 placeholder="Mỗi từ cách nhau bằng dấu ,"
                 onChange={handleUpdateData}
               />
